@@ -1,0 +1,107 @@
+@page "/"
+@page "/events"
+@using System.Globalization
+@using EventEase.Components.Models
+@using Microsoft.AspNetCore.Components
+
+<PageTitle>Events | EventEase</PageTitle>
+
+<section class="container-fluid events-page" aria-labelledby="events-heading">
+    <div class="events-heading d-flex align-items-end justify-content-between gap-4">
+        <div>
+            <p class="eyebrow">YOUR SPACE</p>
+            <h1 id="events-heading">Events</h1>
+            <p class="page-intro">Keep track of and discover upcoming events.</p>
+        </div>
+        <div class="event-count d-flex align-items-center gap-2 p-2 border rounded-3 bg-white"
+             aria-label="@EventCatalog.All.Count events">
+            <span class="event-count__number">@EventCatalog.All.Count</span>
+            <span class="event-count__label">upcoming events</span>
+        </div>
+    </div>
+
+    <div class="events-section-heading d-flex align-items-end justify-content-between gap-4">
+        <div>
+            <h2>Coming up</h2>
+            <p>Exciting experiences to look forward to</p>
+        </div>
+        <span class="events-section-heading__period">November 2026 — February 2027</span>
+    </div>
+
+    @if (EventCatalog.All.Count == 0)
+    {
+        <div class="alert alert-info" role="status">There are no events to display yet.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-lg-2 g-4">
+            @foreach (var eventItem in PagedEvents)
+            {
+                <div class="col" @key="eventItem.Slug">
+                    <EventCard EventName="@eventItem.Name"
+                               Date="@eventItem.Date"
+                               Location="@eventItem.Location"
+                               DetailsUrl="@($"/events/{eventItem.Slug}")" />
+                </div>
+            }
+        </div>
+    }
+
+    @if (TotalPages > 1)
+    {
+        <nav class="d-flex align-items-center justify-content-between mt-4"
+             aria-label="Event list pagination">
+            @if (CurrentPage > 1)
+            {
+                <NavLink class="btn btn-outline-primary"
+                         href="@($"/events?page={CurrentPage - 1}")"
+                         rel="prev">
+                    Previous
+                </NavLink>
+            }
+            else
+            {
+                <span></span>
+            }
+
+            <span class="text-secondary" aria-live="polite">
+                Page @CurrentPage of @TotalPages
+            </span>
+
+            @if (CurrentPage < TotalPages)
+            {
+                <NavLink class="btn btn-outline-primary"
+                         href="@($"/events?page={CurrentPage + 1}")"
+                         rel="next">
+                    Next
+                </NavLink>
+            }
+            else
+            {
+                <span></span>
+            }
+        </nav>
+    }
+</section>
+
+@code {
+    private const int PageSize = 12;
+
+    [SupplyParameterFromQuery(Name = "page")]
+    public string? PageQuery { get; set; }
+
+    private int TotalPages =>
+        Math.Max(1, (int)Math.Ceiling(EventCatalog.All.Count / (double)PageSize));
+
+    private int RequestedPage =>
+        int.TryParse(PageQuery, NumberStyles.None, CultureInfo.InvariantCulture, out var page)
+            ? page
+            : 1;
+
+    private int CurrentPage => Math.Clamp(RequestedPage, 1, TotalPages);
+
+    private IEnumerable<EventItem> PagedEvents =>
+        EventCatalog.All
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize);
+}

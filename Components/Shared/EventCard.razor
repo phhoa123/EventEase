@@ -1,0 +1,67 @@
+@using System.Globalization
+
+@if (!IsValid)
+{
+    <div class="alert alert-warning mb-0" role="status">
+        Event information is unavailable.
+    </div>
+}
+else
+{
+    <article class="card h-100 border-0 shadow-sm event-card">
+        <div class="card-body d-flex flex-column p-4">
+            <h2 class="card-title h5 fw-semibold">@EventName!.Trim()</h2>
+
+            <div class="event-card__metadata">
+                <p class="d-flex align-items-center gap-2 mb-2">
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                        <rect x="3" y="4.5" width="14" height="13" rx="2" />
+                        <path d="M6.5 2.5v4M13.5 2.5v4M3 8.5h14" />
+                    </svg>
+                    <time datetime="@Date!.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)">
+                        @Date!.Value.ToString("dddd, MMMM d, yyyy", CultureInfo.InvariantCulture)
+                    </time>
+                </p>
+                <p class="d-flex align-items-center gap-2 mb-0">
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M16 8.3c0 4.2-6 9.2-6 9.2S4 12.5 4 8.3a6 6 0 1 1 12 0Z" />
+                        <circle cx="10" cy="8" r="2" />
+                    </svg>
+                    <span>@Location!.Trim()</span>
+                </p>
+            </div>
+
+            <NavLink class="btn btn-primary mt-auto align-self-start" href="@DetailsUrl">
+                View Details
+            </NavLink>
+        </div>
+    </article>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public string? EventName { get; set; }
+
+    [Parameter, EditorRequired]
+    public DateTime? Date { get; set; }
+
+    [Parameter, EditorRequired]
+    public string? Location { get; set; }
+
+    [Parameter, EditorRequired]
+    public string? DetailsUrl { get; set; }
+
+    private bool IsValid =>
+        !string.IsNullOrWhiteSpace(EventName) &&
+        Date is { } eventDate && eventDate != default &&
+        !string.IsNullOrWhiteSpace(Location) &&
+        IsLocalDetailsUrl(DetailsUrl);
+
+    private static bool IsLocalDetailsUrl(string? url) =>
+        !string.IsNullOrWhiteSpace(url) &&
+        Uri.TryCreate(url, UriKind.Relative, out _) &&
+        url.StartsWith('/') &&
+        !url.StartsWith("//", StringComparison.Ordinal) &&
+        !url.Contains('\\') &&
+        !url.Any(char.IsControl);
+}

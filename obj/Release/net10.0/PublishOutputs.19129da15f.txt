@@ -1,0 +1,11 @@
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\EventEase.exe
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\appsettings.Development.json
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\appsettings.json
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\tests\e2e\package-lock.json
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\tests\e2e\package.json
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\tests\e2e\test-results\.last-run.json
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\tests\e2e\tsconfig.json
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\EventEase.dll
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\EventEase.runtimeconfig.json
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\EventEase.pdb
+C:\Users\phhoa\AppData\Local\Temp\EventEase-publish-validation-20261017094414\EventEase.deps.json

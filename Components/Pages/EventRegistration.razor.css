@@ -1,0 +1,46 @@
+.event-registration-page {
+    max-width: 960px;
+}
+
+.registration-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #68758b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.registration-back-link:hover {
+    color: #526bc0;
+}
+
+.registration-card {
+    border-radius: 1rem;
+}
+
+.registration-card h1 {
+    color: #202b3d;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+}
+
+.registration-card .validation-message {
+    display: block;
+    margin-top: 0.35rem;
+    color: #b02a37;
+    font-size: 0.8rem;
+}
+
+.registration-card .btn-primary {
+    min-height: 2.8rem;
+    background: #536bc1;
+    border-color: #536bc1;
+    font-weight: 650;
+}
+
+.registration-card .btn-primary:hover {
+    background: #435aad;
+    border-color: #435aad;
+}

@@ -1,0 +1,179 @@
+@page "/events/{Slug}/register"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using System.Globalization
+@using EventEase.Components.Models
+@inject UserSessionTracker SessionTracker
+@inject AttendanceTrackerService AttendanceService
+
+<PageTitle>@(EventItem is null ? "Registration | EventEase" : $"Register for {EventItem.Name} | EventEase")</PageTitle>
+
+@if (EventItem is null)
+{
+    <section class="container event-registration-page py-5">
+        <p class="eyebrow">REGISTRATION</p>
+        <h1 class="h2">We couldn't find that event</h1>
+        <p class="text-secondary">It may have been removed or the link may be incorrect.</p>
+        <NavLink class="btn btn-outline-primary" href="/events">Back to events</NavLink>
+    </section>
+}
+else
+{
+    <section class="container event-registration-page py-4 py-lg-5" aria-labelledby="registration-title">
+        <NavLink class="registration-back-link" href="@($"/events/{EventItem.Slug}")">
+            <span aria-hidden="true">&larr;</span>
+            Back to event details
+        </NavLink>
+
+        <div class="row justify-content-center mt-3">
+            <div class="col-12 col-lg-8 col-xl-7">
+                <div class="card border-0 shadow-sm registration-card">
+                    <div class="card-body p-4 p-md-5">
+                        <p class="eyebrow">EVENT REGISTRATION</p>
+                        <h1 class="h2 mb-2" id="registration-title">Register for @EventItem.Name</h1>
+                        <p class="text-secondary mb-4">
+                            @EventItem.Date.ToString("dddd, MMMM d, yyyy", CultureInfo.InvariantCulture)
+                            <span aria-hidden="true"> · </span>
+                            @EventItem.Location
+                        </p>
+
+                        @if (RegistrationSubmitted)
+                        {
+                            <div class="d-grid gap-3">
+                                <div class="alert alert-success mb-0" role="status">
+                                    <h2 class="h5 alert-heading">Registration received</h2>
+                                    <p class="mb-0">
+                                        Thanks, @SessionTracker.AttendeeName. Your registration is recorded for this session.
+                                    </p>
+                                    <p class="small mb-0 mt-2">
+                                        Current session: @SessionTracker.RegistrationCount event registration(s).
+                                    </p>
+                                </div>
+                                <AttendanceTracker />
+                            </div>
+                        }
+                        else
+                        {
+                            <EditForm Model="@Registration"
+                                      FormName="EventRegistration"
+                                      OnValidSubmit="SubmitRegistration"
+                                      novalidate="novalidate">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary class="alert alert-danger" />
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="registration-name">Full name</label>
+                                    <InputText id="registration-name"
+                                               class="form-control"
+                                               autocomplete="name"
+                                               @bind-Value="Registration.FullName" />
+                                    <ValidationMessage For="@(() => Registration.FullName)" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="registration-email">Email address</label>
+                                    <InputText id="registration-email"
+                                               class="form-control"
+                                               type="email"
+                                               autocomplete="email"
+                                               @bind-Value="Registration.Email" />
+                                    <ValidationMessage For="@(() => Registration.Email)" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="registration-phone">
+                                        Phone number <span class="text-secondary">(optional)</span>
+                                    </label>
+                                    <InputText id="registration-phone"
+                                               class="form-control"
+                                               type="tel"
+                                               autocomplete="tel"
+                                               @bind-Value="Registration.Phone" />
+                                    <ValidationMessage For="@(() => Registration.Phone)" />
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <InputCheckbox id="registration-terms"
+                                                   class="form-check-input"
+                                                   @bind-Value="Registration.AcceptTerms" />
+                                    <label class="form-check-label" for="registration-terms">
+                                        I confirm that my registration details are correct.
+                                    </label>
+                                    <ValidationMessage For="@(() => Registration.AcceptTerms)" />
+                                </div>
+
+                                <p class="small text-secondary">
+                                    This demo keeps registration status in the current app session only; it does not save data to a database.
+                                </p>
+
+                                <button class="btn btn-primary w-100" type="submit">
+                                    Complete registration
+                                </button>
+                            </EditForm>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@code {
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private EventItem? EventItem => EventCatalog.Find(Slug);
+    private RegistrationModel Registration { get; set; } = new();
+    private bool RegistrationSubmitted { get; set; }
+    private string? PreviousSlug { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (!string.Equals(PreviousSlug, Slug, StringComparison.OrdinalIgnoreCase))
+        {
+            Registration = new RegistrationModel();
+            RegistrationSubmitted = EventItem is not null &&
+                                    SessionTracker.HasRegistration(EventItem.Slug);
+            PreviousSlug = Slug;
+        }
+    }
+
+    private void SubmitRegistration()
+    {
+        if (EventItem is null)
+        {
+            return;
+        }
+
+        SessionTracker.RegisterForEvent(EventItem, Registration.FullName);
+        AttendanceService.Register(EventItem, Registration.FullName, Registration.Email);
+        RegistrationSubmitted = true;
+    }
+
+    private sealed class RegistrationModel
+    {
+        [Required(ErrorMessage = "Please enter your full name.")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Your name must be between 2 and 100 characters.")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please enter your email address.")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+        [StringLength(254, ErrorMessage = "Your email address cannot exceed 254 characters.")]
+        public string Email { get; set; } = string.Empty;
+
+        private string? _phone;
+
+        [RegularExpression(
+            @"^\+?(?=(?:\D*\d){7,15}\D*$)\d[0-9() .-]*\d$",
+            ErrorMessage = "Enter a phone number with 7 to 15 digits.")]
+        [StringLength(25, ErrorMessage = "The phone number cannot exceed 25 characters.")]
+        public string? Phone
+        {
+            get => _phone;
+            set => _phone = string.IsNullOrWhiteSpace(value) ? null : value;
+        }
+
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Please confirm your registration details.")]
+        public bool AcceptTerms { get; set; }
+    }
+}

@@ -1,0 +1,72 @@
+@inject AttendanceTrackerService AttendanceService
+
+<section aria-labelledby="attendance-heading">
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+        <div>
+            <p class="eyebrow mb-1">YOUR SESSION</p>
+            <h2 class="h4 mb-0" id="attendance-heading">Attendance tracker</h2>
+        </div>
+        <p class="small text-secondary mb-0">
+            @AttendanceService.AttendedCount of @AttendanceService.RegisteredCount event(s) checked in
+        </p>
+    </div>
+
+    <p class="small text-secondary">
+        Demo self check-in only. Attendance is stored in this browser session and is not verified by event staff.
+    </p>
+
+    @if (AttendanceService.Records.Count == 0)
+    {
+        <div class="alert alert-info" role="status">
+            You have not registered for any events in this session yet.
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var attendance in AttendanceService.Records)
+            {
+                <article class="list-group-item d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3"
+                         @key="attendance.EventSlug">
+                    <div>
+                        <h3 class="h6 mb-1">@attendance.EventName</h3>
+                        <p class="small text-secondary mb-1">@attendance.EventDate.ToString("MMMM d, yyyy") · @attendance.Location</p>
+                        <p class="small mb-0">
+                            Registered as @attendance.AttendeeName
+                            <span class="text-secondary">(@attendance.AttendeeEmail)</span>
+                        </p>
+                        @if (attendance.CheckedInAt is { } checkedInAt)
+                        {
+                            <p class="small text-success mb-0">
+                                Checked in at <time datetime="@checkedInAt.ToString("O")">@checkedInAt.ToLocalTime().ToString("g")</time>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="small text-secondary mb-0">
+                                Registered at <time datetime="@attendance.RegisteredAt.ToString("O")">@attendance.RegisteredAt.ToLocalTime().ToString("g")</time>
+                            </p>
+                        }
+                    </div>
+
+                    @if (attendance.CheckedInAt is null)
+                    {
+                        <button class="btn btn-outline-primary btn-sm align-self-start align-self-md-center"
+                                type="button"
+                                @onclick="() => CheckIn(attendance.EventSlug)">
+                            Mark attended
+                        </button>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-success align-self-start align-self-md-center">Attended</span>
+                    }
+                </article>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    private void CheckIn(string eventSlug) => AttendanceService.MarkAttended(eventSlug);
+}

@@ -1,0 +1,156 @@
+.page {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    width: 248px;
+    height: 100vh;
+    flex: 0 0 248px;
+    background: #17243a;
+    color: #fff;
+}
+
+.main-content {
+    min-width: 0;
+    flex: 1;
+    background: #f7f8fb;
+}
+
+.top-row {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    height: 68px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    border-bottom: 1px solid #e9ecf1;
+    background: rgb(255 255 255 / 94%);
+    backdrop-filter: blur(12px);
+}
+
+.topbar-context {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: #8992a1;
+    font-size: 0.78rem;
+}
+
+.topbar-context__divider {
+    color: #c5cad3;
+}
+
+.topbar-context strong {
+    color: #354157;
+    font-weight: 650;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.topbar-user__avatar {
+    display: grid;
+    width: 2.15rem;
+    height: 2.15rem;
+    place-items: center;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #e9edfa;
+    box-shadow: 0 0 0 1px #dce2f0;
+    color: #5368ae;
+    font-size: 0.68rem;
+    font-weight: 750;
+}
+
+.topbar-user__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.topbar-user__info strong {
+    color: #39445a;
+    font-size: 0.74rem;
+    font-weight: 650;
+}
+
+.topbar-user__info small {
+    color: #939baa;
+    font-size: 0.65rem;
+}
+
+.content {
+    padding: 0 2.5rem;
+}
+
+#blazor-error-ui {
+    position: fixed;
+    z-index: 1000;
+    bottom: 0;
+    left: 0;
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.7rem 1.25rem;
+    background: lightyellow;
+    box-shadow: 0 -1px 2px rgb(0 0 0 / 20%);
+    color: #302c1f;
+    color-scheme: light only;
+}
+
+#blazor-error-ui .dismiss {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    cursor: pointer;
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        width: 220px;
+        flex-basis: 220px;
+    }
+
+    .top-row {
+        padding: 0 1.5rem;
+    }
+
+    .content {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .page {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-basis: auto;
+    }
+
+    .top-row {
+        height: 58px;
+        padding: 0 1.1rem;
+    }
+
+    .topbar-user__info {
+        display: none;
+    }
+
+    .content {
+        padding: 0 1rem;
+    }
+}

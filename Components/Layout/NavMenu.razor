@@ -1,0 +1,46 @@
+<div class="brand-row">
+    <NavLink class="brand" href="/" aria-label="EventEase - Home">
+        <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <rect x="4" y="5.5" width="16" height="15" rx="3" />
+                <path d="M8 3.5v4M16 3.5v4M4 10h16M8.5 14h2M13.5 14h2M8.5 17h2" />
+            </svg>
+        </span>
+        <span>Event<span class="brand__accent">Ease</span></span>
+    </NavLink>
+</div>
+
+<input type="checkbox" title="Toggle navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column" aria-label="Main navigation">
+        <span class="nav-section-label">WORKSPACE</span>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/events" Match="NavLinkMatch.All">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3.5" y="5" width="17" height="16" rx="2.5" />
+                    <path d="M8 3v4M16 3v4M3.5 10h17M8 14h3M8 17h6" />
+                </svg>
+                Events
+                <span class="nav-link__count">04</span>
+            </NavLink>
+        </div>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/attendance">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12.5 9.5 17 19 7.5" />
+                    <circle cx="12" cy="12" r="9" />
+                </svg>
+                Attendance
+            </NavLink>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <span class="sidebar-footer__status"></span>
+        <span>
+            <strong>EventEase Workspace</strong>
+            <small>Free plan</small>
+        </span>
+    </div>
+</div>
